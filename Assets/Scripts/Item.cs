@@ -39,7 +39,7 @@ public class Item : MonoBehaviour
             switch (potion)
             {
                 case Potion.speed:
-                    player.StartCoroutine("SpeedPotion");
+                    player.SpeedPotion();
                     break;
                 case Potion.bullet:
                     player.BulletPotion();

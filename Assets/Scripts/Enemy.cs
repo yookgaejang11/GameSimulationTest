@@ -46,7 +46,10 @@ public class Enemy : MonoBehaviour
             if (Vector3.Distance(target.transform.position, this.transform.position) <= 1.5f)
             {
 
-                StartCoroutine("Attack");
+                if(isDie)
+                {
+                    StartCoroutine("Attack");
+                }
                 animator.SetBool("isMove", false);
 
             }
@@ -78,8 +81,15 @@ public class Enemy : MonoBehaviour
                 isDie = true;
                 animator.SetTrigger("isDie");
                 Instantiate(Item, transform.position, Quaternion.identity);
+                StartCoroutine("Delete");
             }
 
         }
+    }
+
+    IEnumerator Delete()
+    {
+        yield return new WaitForSeconds(2f);
+        Destroy(this.gameObject);
     }
 }

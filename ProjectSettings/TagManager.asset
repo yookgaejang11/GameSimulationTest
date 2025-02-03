@@ -7,6 +7,7 @@ TagManager:
   - Enemy
   - Gun
   - Wall
+  - Citizen
   layers:
   - Default
   - TransparentFX

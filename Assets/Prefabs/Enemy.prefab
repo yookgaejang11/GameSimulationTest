@@ -9502,7 +9502,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Item: {fileID: 5484702855695127797, guid: dec5ab50c3ac5ce45ba35a9b7a6ec21e, type: 3}
   target: {fileID: 0}
-  Hp: 5
+  Hp: 1
   isDie: 0
   isAttack: 0
 --- !u!195 &7764289980777849920

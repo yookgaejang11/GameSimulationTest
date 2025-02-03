@@ -7,6 +7,8 @@ using UnityEngine.Scripting.APIUpdating;
 
 public class Player : MonoBehaviour
 {
+    public bool itemSpeed;
+    public float upTime;
     public Bullet bullet;
     public GameObject bat;
     public GameObject gun;
@@ -33,34 +35,38 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if(isWalk)
+        if(!isDie)
         {
-            animator.SetBool("isWalk", true);
+            if (isWalk)
+            {
+                animator.SetBool("isWalk", true);
+            }
+            else
+            {
+                animator.SetBool("isWalk", false);
+            }
+            Attack();
+            Move();
+            Rotation();
+            StopSpeed();
         }
-        else
-        {
-            animator.SetBool("isWalk", false);
-        }
-        Attack();
-        Move();
-        Rotation();
-        
+       
     }
 
- 
+
 
     private void Move()
     {
-        Vector3 move = new Vector3 (Input.GetAxisRaw("Horizontal"),0, Input.GetAxisRaw("Vertical")).normalized;
-       if(Input.GetKey(KeyCode.W))
+        Vector3 move = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
+        if (Input.GetKey(KeyCode.W))
         {
-            controller.Move(this.transform.forward * speed* Time.deltaTime);
+            controller.Move(this.transform.forward * speed * Time.deltaTime);
             isWalk = true;
         }
-       else if(Input.GetKey(KeyCode.S))
+        else if (Input.GetKey(KeyCode.S))
         {
-            controller.Move(-this.transform.forward *speed * Time.deltaTime);
-            isWalk= true;
+            controller.Move(-this.transform.forward * speed * Time.deltaTime);
+            isWalk = true;
         }
         else if (Input.GetKey(KeyCode.A))
         {
@@ -72,7 +78,7 @@ public class Player : MonoBehaviour
             controller.Move(this.transform.right * speed * Time.deltaTime);
             isWalk = true;
         }
-       else
+        else
         {
             isWalk = false;
         }
@@ -88,6 +94,10 @@ public class Player : MonoBehaviour
             Destroy(other.gameObject);
         }
 
+        if (other.CompareTag("Citizen"))
+        {
+            other.gameObject.SetActive(false);
+        }
 
     }
 
@@ -106,7 +116,7 @@ public class Player : MonoBehaviour
 
         float rayLength;
 
-        if(plane.Raycast(cameraRay, out rayLength))
+        if (plane.Raycast(cameraRay, out rayLength))
         {
             Vector3 lookDir = cameraRay.GetPoint(rayLength);
             transform.LookAt(new Vector3(lookDir.x, transform.position.y, lookDir.z));
@@ -115,7 +125,7 @@ public class Player : MonoBehaviour
 
     void Attack()
     {
-        if(Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0))
         {
             if (!isAttackCheck && !correctGun)
             {
@@ -126,23 +136,23 @@ public class Player : MonoBehaviour
             else if (!isAttackCheck && correctGun)
             {
                 animator.SetTrigger("isGun");
-                isAttackCheck =true;
+                isAttackCheck = true;
                 StartCoroutine("Shot");
             }
 
         }
     }
 
-   IEnumerator StopAttack()
+    IEnumerator StopAttack()
     {
         yield return new WaitForSeconds(0.5f);
-        isAttackCheck =false;
+        isAttackCheck = false;
     }
 
     IEnumerator Shot()
     {
         yield return new WaitForSeconds(0.5f);
-        Instantiate(Bullet, new Vector3(transform.position.x,transform.position.y + 0.8f,transform.position.z), this.transform.rotation);
+        Instantiate(Bullet, new Vector3(transform.position.x, transform.position.y + 0.8f, transform.position.z), this.transform.rotation);
         yield return new WaitForSeconds(0.5f);
         isAttackCheck = false;
     }
@@ -161,14 +171,28 @@ public class Player : MonoBehaviour
         }
     }
 
-    public IEnumerator SpeedPotion()
+    public void SpeedPotion()
     {
+        upTime = 0;
         Debug.Log("스피드 업");
         speed = 8;
-        yield return new WaitForSeconds(4);
-        speed = 5;
-        Debug.Log("효과 종료");
+        itemSpeed = true;
+
     }
+
+    void StopSpeed()
+    {
+        if (itemSpeed)
+        {
+            upTime += Time.deltaTime;
+            if(upTime >= 3)
+            {
+                speed = 5;
+                itemSpeed = false;
+            }
+        }
+    }
+
     public void BulletPotion()
     {
         Debug.Log("총알 속도 증가");
